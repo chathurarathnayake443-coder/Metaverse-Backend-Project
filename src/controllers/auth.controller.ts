@@ -45,7 +45,7 @@ export const register = async (req:Request, res:Response) => {
             await UserModel.findByIdAndDelete(newUser._id) // a rollback step if seeker doesn't saved
             console.log(error)
         }
-        res.status(201).json({message:"Seeker Created Successfully !..."})
+        res.status(201).json({message:"Registration Successfull !..."})
     }
     catch(error){
         console.error(error)

@@ -1,4 +1,5 @@
 import express, {type Request, type Response} from "express"
+import AuthRouter from "./routes/auth.routes"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from "cors"
@@ -14,8 +15,10 @@ app.use(express.json())  // a built in middleware, which reads the body of all i
 
 app.use(cors())
 
+app.use("/api/v1/auth", AuthRouter)
+
 app.get("/", (req:Request, res:Response) => {
-    res.status(200).json({message:"This is the Test API !"})
+    res.status(200).json({message:"This is the MetaVerse Test API !"})
 })
 
 mongoose

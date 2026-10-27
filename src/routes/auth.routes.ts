@@ -8,3 +8,5 @@ const router = Router()
 router.post("/register", register)
 
 // protected endpoints
+
+export default router
