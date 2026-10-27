@@ -8,9 +8,9 @@ export enum VerifyStatus{
 export interface ICompany extends Document{
     user:Types.ObjectId
     website:string
-    description:string
-    noOfVerifiedOfficers:number
-    noOfVacanciesPosted:number
+    description?:string
+    noOfVerifiedOfficers?:number
+    noOfVacanciesPosted?:number
     isVerified:VerifyStatus
 }
 

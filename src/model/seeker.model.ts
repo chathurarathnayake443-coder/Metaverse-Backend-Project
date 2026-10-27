@@ -23,5 +23,5 @@ const seekerSchema = new Schema<ISeeker>(
     {timestamps:true}
 )
 
-export const seekerModel = model<ISeeker>("seekers",seekerSchema)
+export const SeekerModel = model<ISeeker>("seekers",seekerSchema)
 
