@@ -85,3 +85,28 @@ export const login = async (req:Request, res:Response) => {
         console.log("Error in login function",error)
     }
 }
+
+// Protected Endpoints
+
+export const getMyDetails = async (req:AuthRequest, res:Response) => {
+    
+    try{
+        if(!req.user){
+        return res.status(401).json({message:"Unauthorized !..."})
+    }
+
+    const userId = req.user.sub
+    const user = await UserModel.findById(userId).select("-password")
+
+    if(!user){
+        return res.status(404).json({message:"User Not Found !..."})
+    }
+
+    const {fullName, email, roles, _id, profileImage} = user
+    res.status(200).json({message:"get MyDetails Success !", data:{fullName,email,roles,profileImage, id:_id}})
+    }
+    catch(error){
+        console.error("Error in getMyDetails",error)
+        res.status(500).json({message:"Failed to Fetch User !..."})
+    }
+}
