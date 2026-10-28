@@ -52,3 +52,36 @@ export const register = async (req:Request, res:Response) => {
         res.status(500).json({message:"Registration Failed !..."})
     }
 }
+
+export const login = async (req:Request, res:Response) => {
+    const{email, password} = req.body
+
+    try{
+        if(!email || !password){
+            return res.status(400).json({message:"Email or Password Missing !..."})
+        }
+
+        const user = await UserModel.findOne({email: email}) // can be written as ({email}) also, because key and value names are equal
+        if(!user){
+            return res.status(401).json({message:"User Not Found !..."})
+        }
+
+        const isValid = await bcrypt.compare(password, user?.password)
+        if(!isValid){
+            return res.status(401).json({message:"Invalid Credentials !..."})
+        }
+
+        const accessToken = signAccessToken(user)
+        const refreshToken = signRefreshToken(user)
+
+        res.status(200).json({message:"Authentication Successful !",data:{
+            email: user?.email,
+            roles: user?.roles,
+            access_token: accessToken,
+            refresh_token: refreshToken
+        }})
+    }
+    catch(error){
+        console.log("Error in login function",error)
+    }
+}
