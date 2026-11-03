@@ -10,6 +10,7 @@ export interface IVacancy extends Document{
     title: string,
     description: string,
     deadlineDate: Date,
+    taskPdfUrl: string,
     currentSubmissionCount: number,
     vacancyStatus: VacancyStatus
 }
@@ -20,6 +21,7 @@ const vacancySchema = new Schema<IVacancy>(
         title: {type:String, required:true},
         description: {type:String, required:true},
         deadlineDate: {type:Date , required:true},
+        taskPdfUrl: {type:String, required: true},
         currentSubmissionCount: {type:Number, required:true},
         vacancyStatus: {
             type: String,
