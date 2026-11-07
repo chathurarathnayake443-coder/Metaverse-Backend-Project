@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token"
 import { AuthRequest } from "../middleware/auth"
 import jwt from "jsonwebtoken"
+import { CompanyModel, VerifyStatus } from "../model/company.model"
 
 export const register = async (req:Request, res:Response) => {
     try{
@@ -25,6 +26,7 @@ export const register = async (req:Request, res:Response) => {
             telephone: contact,
             password: hashedPassword,
             userStatus: UserStatus.ACTIVE,
+            profileImage:"",
             roles: [UserRole.SEEKER],
             approve: true
         })
@@ -52,6 +54,54 @@ export const register = async (req:Request, res:Response) => {
         res.status(500).json({message:"Registration Failed !..."})
     }
 }
+
+export const companyRegister = async(req:Request, res:Response) => {
+    try{
+        const{name, email,address, contact, website, password} = req.body
+        const extCompany = await CompanyModel.findOne({email})
+        if(extCompany){
+            return res.status(400).json({
+                message:"Company Already Exists !..."
+            })
+        }
+        const salt = bcrypt.genSaltSync(10)
+        const hashedPassword = bcrypt.hashSync(password, salt)
+
+        const newUser = new UserModel({
+            fullName:name,
+            email:email,
+            address:address,
+            telephone:contact,
+            profileImage:"",
+            password:hashedPassword,
+            userStatus:UserStatus.ACTIVE,
+            roles:[UserRole.COMPANY],
+            approve:true
+        })
+        await newUser.save()
+
+        try{
+            const newCompany = new CompanyModel({
+                user:newUser._id,
+                website:website,
+                description:"",
+                noOfVerifiedOfficers:0,
+                noOfVacanciesPosted:0,
+                isVerified:VerifyStatus.VERIFIED
+            })
+            await newCompany.save()
+        }
+        catch(error){
+            await CompanyModel.findByIdAndDelete(newUser._id)
+            console.log(error)
+        }
+        res.status(201).json({message:"Registration Successfull !..."})
+    }
+    catch(error){
+        console.error(error)
+        res.status(500).json({message:"Registration Failed !..."})
+    }
+} 
 
 export const login = async (req:Request, res:Response) => {
     const{email, password} = req.body
@@ -89,7 +139,7 @@ export const login = async (req:Request, res:Response) => {
 // Protected Endpoints
 
 export const getMyDetails = async (req:AuthRequest, res:Response) => {
-    
+
     try{
         if(!req.user){
         return res.status(401).json({message:"Unauthorized !..."})
@@ -108,5 +158,34 @@ export const getMyDetails = async (req:AuthRequest, res:Response) => {
     catch(error){
         console.error("Error in getMyDetails",error)
         res.status(500).json({message:"Failed to Fetch User !..."})
+    }
+}
+
+const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_SECRET as string
+
+export const getRefreshToken = async (req:Request, res:Response) => {
+    const { refreshToken } = req.body
+    try{
+        if(!refreshToken){
+            return res.status(400).json({message:"Token Not Found !..."})
+        }
+
+        const payload = jwt.verify(refreshToken, JWT_REFRESH_TOKEN)
+        const userId = payload?.sub
+        const user = await UserModel.findById(userId)
+
+        if(!user){
+            return res.status(403).json({message:"Invalid or Expired Token !..."})
+        }
+
+        const newAccessToken = signAccessToken(user)
+        res.status(200).json({
+            data:{accessToken : newAccessToken}
+        })
+    }
+    catch(error){
+        res.status(403).json({
+            message:"Invalid or Expired Token !..."     
+        })
     }
 }

@@ -2,7 +2,7 @@ import type {} from "multer"
 import { supabase } from "../config/supabase"
 import crypto from "crypto" 
 
-export const uploadImage = async (file: Express.Multer.File, bucketName:string) => {
+export const uploadFile = async (file: Express.Multer.File, bucketName:string) => {
 
     const uuid = crypto.randomUUID()
     const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.]/g, "-")

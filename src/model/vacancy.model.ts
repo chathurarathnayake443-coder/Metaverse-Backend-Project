@@ -6,7 +6,7 @@ export enum VacancyStatus{
 }
 
 export interface IVacancy extends Document{
-    user: Types.ObjectId,
+    company: Types.ObjectId,
     title: string,
     description: string,
     deadlineDate: Date,
@@ -17,7 +17,11 @@ export interface IVacancy extends Document{
 
 const vacancySchema = new Schema<IVacancy>(
     {
-        user: {type: Schema.Types.ObjectId, ref: "companies", required: true},
+        company: {
+            type: Schema.Types.ObjectId, 
+            ref: "companies", 
+            required: true
+        },
         title: {type:String, required:true},
         description: {type:String, required:true},
         deadlineDate: {type:Date , required:true},
