@@ -7,7 +7,7 @@ import { VacancyStatus } from "../model/vacancy.model"
 
 export const createVacancy = async (req:AuthRequest, res:Response) => {
 
-    const {title, description, deadline, file} = req.body
+    const {title, description, deadline} = req.body
 
     try{
         if(!req.user){
@@ -37,5 +37,16 @@ export const createVacancy = async (req:AuthRequest, res:Response) => {
     catch(error){
         console.error("Error in Creating Vacancy Post", error)
         res.status(500).json({message:"Failed to Create the Vacancy Post !..."})
+    }
+}
+
+export const getAllVacancies = async (req:AuthRequest, res:Response) => {
+    try{
+        const vacancies = await VacancyModel.find().populate("company","fullName profileImage").sort({createdAt: -1})
+        res.status(200).json(vacancies)
+    }
+    catch(error){
+        console.error("Error in getAllNotes", error)
+        res.status(500).json({message:"Internal Server Error"})
     }
 }

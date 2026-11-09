@@ -19,7 +19,7 @@ const vacancySchema = new Schema<IVacancy>(
     {
         company: {
             type: Schema.Types.ObjectId, 
-            ref: "companies", 
+            ref: "system_users", 
             required: true
         },
         title: {type:String, required:true},
