@@ -6,6 +6,7 @@ import { signAccessToken, signRefreshToken } from "../utils/token"
 import { AuthRequest } from "../middleware/auth"
 import jwt from "jsonwebtoken"
 import { CompanyModel, VerifyStatus } from "../model/company.model"
+import { uploadFile } from "../services/storage.services"
 
 export const register = async (req:Request, res:Response) => {
     try{
@@ -187,5 +188,31 @@ export const getRefreshToken = async (req:Request, res:Response) => {
         res.status(403).json({
             message:"Invalid or Expired Token !..."     
         })
+    }
+}
+
+export const updateProfileImage = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: "Image is required !..." })
+        }
+
+        const user = await UserModel.findById(req.user.sub)
+        if (!user) {
+            return res.status(404).json({ message: "User Not Found !..." })
+        }
+
+        const imageUrl = await uploadFile(req.file, "profile-images")
+
+        user.profileImage = imageUrl
+        await user.save()
+
+        res.status(200).json({
+            message: "Profile Picture Updated !...",
+            data: { profileImage: imageUrl }
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "Failed to upload image !..." })
     }
 }

@@ -40,6 +40,7 @@ export const createVacancy = async (req:AuthRequest, res:Response) => {
     }
 }
 
+// all companies
 export const getAllVacancies = async (req:AuthRequest, res:Response) => {
     try{
         const vacancies = await VacancyModel.find().populate("company","fullName profileImage").sort({createdAt: -1})
@@ -48,5 +49,19 @@ export const getAllVacancies = async (req:AuthRequest, res:Response) => {
     catch(error){
         console.error("Error in getAllNotes", error)
         res.status(500).json({message:"Internal Server Error"})
+    }
+}
+
+// for specific company
+export const getCompanyVacancies = async (req:AuthRequest, res:Response) => {
+    try{
+        const vacancies = await VacancyModel.find({company: req.user.sub}).
+            populate("company", "fullName profileImage currentSubmissionCount vacancyStatus title description deadlineDate").sort({createdAt: -1})
+        
+        res.status(200).json(vacancies)    
+    }
+    catch(error){
+        console.error(error)
+        res.status(500).json({message:"Failed to fetch Vacancies !..."})
     }
 }

@@ -1,6 +1,7 @@
 import express, {type Request, type Response} from "express"
 import AuthRouter from "./routes/auth.routes"
 import VacancyRouter from "./routes/vacancy.routes"
+import CompanyRouter from "./routes/company.routes"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from "cors"
@@ -18,6 +19,7 @@ app.use(cors())
 
 app.use("/api/v1/auth", AuthRouter)
 app.use("/api/v1/vacancy", VacancyRouter)
+app.use("/api/v1/company", CompanyRouter)
 
 app.get("/", (req:Request, res:Response) => {
     res.status(200).json({message:"This is the MetaVerse Test API !"})
