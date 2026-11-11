@@ -3,10 +3,11 @@ import { upload } from "../middleware/upload"
 import { authorize } from "../middleware/role"
 import { UserRole } from "../model/user.model"
 import { authenticate } from "../middleware/auth"
-import { getMyCompany } from "../controllers/company.controller"
+import { getMyCompany, editDescription } from "../controllers/company.controller"
 
 const router = Router()
 
 router.get("/me", authenticate, authorize(UserRole.COMPANY), getMyCompany)
+router.put("/edit-description",authenticate, authorize(UserRole.COMPANY), editDescription)
 
 export default router

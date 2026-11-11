@@ -32,3 +32,32 @@ export const getMyCompany = async (req:AuthRequest, res:Response) => {
         res.status(500).json({message:"Failed to Load Company !..."})
     }
 }
+
+export const editDescription = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user.sub
+        const { description } = req.body
+
+        if (typeof description !== "string" || description.trim() === "") {
+            return res.status(400).json({ message: "Description is required" })
+        }
+
+        const company = await CompanyModel.findOneAndUpdate(
+            { user: userId },
+            { description: description.trim() },
+            { new: true, runValidators: true }
+        )
+
+        if (!company) {
+            return res.status(404).json({ message: "Company Not Found !..." })
+        }
+
+        return res.status(200).json({
+            message: "Description updated successfully",
+            company
+        })
+    } catch (error) {
+        console.error("editDescription error:", error)
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
