@@ -4,6 +4,7 @@ import { uploadFile } from "../services/storage.services"
 import { VacancyModel } from "../model/vacancy.model"
 import { AuthRequest } from "../middleware/auth"
 import { VacancyStatus } from "../model/vacancy.model"
+import { isValidObjectId } from "mongoose"
 
 export const createVacancy = async (req:AuthRequest, res:Response) => {
 
@@ -63,5 +64,44 @@ export const getCompanyVacancies = async (req:AuthRequest, res:Response) => {
     catch(error){
         console.error(error)
         res.status(500).json({message:"Failed to fetch Vacancies !..."})
+    }
+}
+
+export const getVacancyById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ message: "Invalid vacancy id !..." })
+        }
+
+        const vacancy = await VacancyModel.findById(id)
+            .select("title description taskPdfUrl createdAt deadlineDate currentSubmissionCount company")
+            .populate<{ company: { fullName: string; profileImage?: string } | null }>(
+                "company",
+                "fullName profileImage"
+            )
+
+        if (!vacancy) {
+            return res.status(404).json({ message: "Vacancy Not Found !..." })
+        }
+
+        res.status(200).json({
+            message: "Success",
+            data: {
+                _id: vacancy._id,
+                companyName: vacancy.company?.fullName ?? "Unknown company",
+                companyProfileImage: vacancy.company?.profileImage ?? null,
+                title: vacancy.title,
+                description: vacancy.description,
+                taskPdfUrl: vacancy.taskPdfUrl,
+                deadlineDate: vacancy.deadlineDate,
+                currentSubmissionCount: vacancy.currentSubmissionCount,
+                createdAt: vacancy.createdAt
+            }
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "Failed to fetch vacancy !..." })
     }
 }

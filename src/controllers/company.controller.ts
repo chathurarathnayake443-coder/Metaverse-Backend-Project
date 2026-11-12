@@ -2,6 +2,7 @@ import { Response } from "express"
 import { AuthRequest } from "../middleware/auth"
 import { UserModel } from "../model/user.model"
 import { CompanyModel } from "../model/company.model"
+import { VacancyModel } from "../model/vacancy.model"
 
 export const getMyCompany = async (req:AuthRequest, res:Response) => {
     try{
@@ -9,6 +10,7 @@ export const getMyCompany = async (req:AuthRequest, res:Response) => {
 
         const user = await UserModel.findById(userId).select("fullName address profileImage")
         const company = await CompanyModel.findOne({user:userId}).select("description noOfVerifiedOfficers noOfVacanciesPosted")
+        const vacancyCount = await VacancyModel.countDocuments({ company: userId })
 
         if(!user || !company){
             return res.status(404).json({message:"Company Not Found !..."})
@@ -23,7 +25,7 @@ export const getMyCompany = async (req:AuthRequest, res:Response) => {
                 website:company.website,
                 description:company.description,
                 noOfVerifiedOfficers:company.noOfVerifiedOfficers,
-                noOfVacanciesPosted:company.noOfVacanciesPosted
+                noOfVacanciesPosted:vacancyCount
             }
         })
     }
