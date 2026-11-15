@@ -19,7 +19,7 @@ export const createVacancy = async (req:AuthRequest, res:Response) => {
         const user = await UserModel.findById(userId).select("-password")
 
         if(!user){
-            return res.status(404).json({mesage:"User Not Found !..."})
+            return res.status(403).json({mesage:"User Not Found !..."})
         }
 
         const fileURL = req.file? await uploadFile(req.file, "vacancies") : ""

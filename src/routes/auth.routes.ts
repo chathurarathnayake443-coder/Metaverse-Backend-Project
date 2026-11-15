@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { register, login, getMyDetails, companyRegister, updateProfileImage } from "../controllers/auth.controller"
+import { register, login, getMyDetails, companyRegister, updateProfileImage, getRefreshToken } from "../controllers/auth.controller"
 import { authenticate } from "../middleware/auth"
 import { uploadImageFile } from "../middleware/upload"
 
@@ -10,6 +10,7 @@ router.post("/register", register)
 router.post("/login", login)
 router.post("/company-signup", companyRegister)
 router.put("/profile-image", authenticate, uploadImageFile.single("image"), updateProfileImage)
+router.post("/refresh", getRefreshToken)
 
 // protected endpoints
 router.get("/me",authenticate, getMyDetails) // setting the "authenticate" middleware only in the endpoints we want
