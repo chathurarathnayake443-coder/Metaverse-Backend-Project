@@ -1,10 +1,8 @@
-import { Request, Response } from "express"
-import { SeekerModel } from "../model/seeker.model"
+import { Response } from "express"
 import { VacancyModel } from "../model/vacancy.model"
 import { uploadFile } from "../services/storage.services"
 import { AuthRequest } from "../middleware/auth"
 import { SubmissionModel, SubmissionStatus } from "../model/submission.model"
-import { UserModel } from "../model/user.model"
 import { isValidObjectId } from "mongoose"
 
 export const createSubmission = async (req: AuthRequest, res: Response) => {
