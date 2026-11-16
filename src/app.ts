@@ -10,6 +10,14 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+app.get("/env-check", (req, res) => {
+  res.json({
+    hasMongo: !!process.env.MONGO_URL,  
+    hasJwt: !!process.env.JWT_SECRET,
+    nodeEnv: process.env.NODE_ENV
+  })
+})
+
 app.use("/api/v1/auth", AuthRouter)
 app.use("/api/v1/vacancy", VacancyRouter)
 app.use("/api/v1/company", CompanyRouter)
