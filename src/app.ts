@@ -8,7 +8,22 @@ import SubmissionRouter from "./routes/submission.routes"
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://your-frontend.vercel.app"  
+]
+
+app.use(cors({
+    origin: (origin, callback) => {
+    
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
+    credentials: true
+}))
 
 app.get("/env-check", (req, res) => {
   res.json({
