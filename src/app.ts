@@ -8,30 +8,31 @@ import SubmissionRouter from "./routes/submission.routes"
 const app = express()
 
 app.use(express.json())
+
 const allowedOrigins = [
-    "http://localhost:5173",
-    "https://metaverse-frontend-project.vercel.app"  
+  "http://localhost:5173",
+  "https://metaverse-frontend-project.vercel.app", 
 ]
 
-app.use(cors({
-    origin: (origin, callback) => {
-    
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error("Not allowed by CORS"))
-        }
-    },
-    credentials: true
-}))
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
 
-app.get("/env-check", (req, res) => {
-  res.json({
-    hasMongo: !!process.env.MONGO_URL,  
-    hasJwt: !!process.env.JWT_SECRET,
-    nodeEnv: process.env.NODE_ENV
-  })
-})
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/metaverse-frontend-project-[a-z0-9]+\.vercel\.app$/.test(origin)
+    ) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}
+
+app.use(cors(corsOptions))
 
 app.use("/api/v1/auth", AuthRouter)
 app.use("/api/v1/vacancy", VacancyRouter)
