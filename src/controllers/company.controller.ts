@@ -29,9 +29,9 @@ export const getMyCompany = async (req:AuthRequest, res:Response) => {
             }
         })
     }
-    catch(error){
+    catch(error:any){
         console.error(error)
-        res.status(500).json({message:"Failed to Load Company !..."})
+        res.status(500).json({message:"Failed to Load Company !...",debug: error?.message})
     }
 }
 
