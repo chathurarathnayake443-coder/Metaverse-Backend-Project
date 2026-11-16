@@ -19,7 +19,7 @@ export interface ISubmission extends Document{
 
 const submissionSchema = new Schema<ISubmission>(
     {
-        user:{type: Schema.Types.ObjectId, ref:"seekers", required:true},
+        user:{type: Schema.Types.ObjectId, ref:"system_users", required:true},
         vacancy:{type: Schema.Types.ObjectId, ref:"vacancies",required:true},
         githubRepoUrl:{type:String, required:true},
         linkedInUrl:{type:String, required:true},
