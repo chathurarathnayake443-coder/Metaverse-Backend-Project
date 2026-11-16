@@ -10,7 +10,7 @@ const app = express()
 app.use(express.json())
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://your-frontend.vercel.app"  
+    "https://metaverse-frontend-project.vercel.app"  
 ]
 
 app.use(cors({
