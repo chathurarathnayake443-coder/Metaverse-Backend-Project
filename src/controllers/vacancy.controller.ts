@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { UserModel } from "../model/user.model"
+import { SubmissionModel } from "../model/submission.model"
 import { uploadFile } from "../services/storage.services"
 import { VacancyModel } from "../model/vacancy.model"
 import { AuthRequest } from "../middleware/auth"
@@ -103,5 +104,34 @@ export const getVacancyById = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error)
         res.status(500).json({ message: "Failed to fetch vacancy !..." })
+    }
+}
+
+export const deleteVacancy = async (req:AuthRequest, res:Response) => {
+    try{
+        const {id} = req.params
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ message: "Invalid vacancy id !..." })
+        }
+
+        const vacancy = await VacancyModel.findById(id)
+
+        if (!vacancy) {
+            return res.status(404).json({ message: "Vacancy not found !..." })
+        }
+
+        if (vacancy.company.toString() !== req.user?.sub) {
+            return res.status(403).json({ message: "You can't delete this vacancy !..." })
+        }
+
+        await SubmissionModel.deleteMany({ vacancy: vacancy._id })
+        await vacancy.deleteOne()
+
+        res.status(200).json({message:"Vacancy Deleted Successfully !"})
+    }
+    catch(error){
+        console.log("Error in deleteVacancy Function", error)
+        res.status(500).json({message:"Failed to Delete the Vacancy !..."})
     }
 }
