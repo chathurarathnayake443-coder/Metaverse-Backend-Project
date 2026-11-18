@@ -21,7 +21,7 @@ export const generateSuggestedRoles = async (cv: Express.Multer.File): Promise<s
   }
 
   const response = await ai.models.generateContent({
-    model: "gemini-3.8-flash",
+    model: "gemini-3.5-flash",
     contents: [
       { inlineData: { mimeType: "application/pdf", data: cv.buffer.toString("base64") } },
       { text: "Suggest the suitable job roles for this candidate." },
