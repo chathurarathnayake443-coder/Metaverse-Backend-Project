@@ -65,8 +65,6 @@ Protected routes expect this header:
 
 Authorization: Bearer <access_token>
 
-Add your company, vacancy, and officer endpoints to this table.
-
 Project Structure
 MetaVerse-backend/
 ├── api/
@@ -82,8 +80,6 @@ MetaVerse-backend/
 ├── vercel.json
 ├── tsconfig.json
 └── package.json
-
-Adjust folder names to match your project.
 
 Deployment (Vercel)
 Push the repository to GitHub.
